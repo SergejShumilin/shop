@@ -4,6 +4,6 @@
     <title>Sport shop</title>
 </head>
 <body>
-<h1>Hello ${user}</h1>
+Product: ${product.type} name: ${product.name} price: $${product.price}
 </body>
 </html>
