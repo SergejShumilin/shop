@@ -17,6 +17,8 @@ public class MainServlet extends HttpServlet {
 
     private final List<Product> products = new CopyOnWriteArrayList<>();
     private final AtomicLong idGenerator;
+    private static final String CREATE = "create";
+    private static final String DELETE = "delete";
 
     public MainServlet() {
         Product nike = new Product(1, "Nike", "sneakers", 95);
@@ -36,15 +38,23 @@ public class MainServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String type = req.getParameter("type");
-        String name = req.getParameter("name");
-        Double price = Double.valueOf(req.getParameter("price"));
-        long nextId = idGenerator.incrementAndGet();
+        String command = req.getParameter("command");
+        if (CREATE.equals(command)) {
+            String type = req.getParameter("type");
+            String name = req.getParameter("name");
+            Double price = Double.valueOf(req.getParameter("price"));
+            long nextId = idGenerator.incrementAndGet();
 
-        Product product = new Product(nextId, type, name, price);
-        products.add(product);
+            Product product = new Product(nextId, type, name, price);
+            products.add(product);
 
-        req.setAttribute("products", products);
-        req.getRequestDispatcher("main.jsp").forward(req, resp);
+        }
+
+        if (DELETE.equals(command)){
+            final long id = Long.valueOf(req.getParameter("id"));
+            products.removeIf(product -> product.getId()==id);
+        }
+            req.setAttribute("products", products);
+            req.getRequestDispatcher("main.jsp").forward(req, resp);
+        }
     }
-}
