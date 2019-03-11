@@ -19,11 +19,13 @@ public class MainServlet extends HttpServlet {
     private final AtomicLong idGenerator;
     private static final String CREATE = "create";
     private static final String DELETE = "delete";
+    private static final String TO_EDIT = "to_edit";
+    private static final String EDIT = "edit";
 
     public MainServlet() {
-        Product nike = new Product(1, "Nike", "sneakers", 95);
-        Product adidas = new Product(2, "Adidas", "sneakers", 100);
-        Product puma = new Product(3, "Puma", "sneakers", 85);
+        Product nike = new Product(1, "sneakers", "Nike", 95);
+        Product adidas = new Product(2, "sneakers", "Adidas", 100);
+        Product puma = new Product(3, "sneakers", "Puma", 85);
         products.add(nike);
         products.add(adidas);
         products.add(puma);
@@ -39,21 +41,46 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String command = req.getParameter("command");
-        if (CREATE.equals(command)) {
+        switch (command) {
+            case CREATE:
             String type = req.getParameter("type");
             String name = req.getParameter("name");
             Double price = Double.valueOf(req.getParameter("price"));
             long nextId = idGenerator.incrementAndGet();
 
-            Product product = new Product(nextId, type, name, price);
-            products.add(product);
-
-        }
-
-        if (DELETE.equals(command)){
-            final long id = Long.valueOf(req.getParameter("id"));
+            Product newProduct = new Product(nextId, type, name, price);
+            products.add(newProduct);
+            break;
+            case DELETE:{
+            long id = Long.valueOf(req.getParameter("id"));
             products.removeIf(product -> product.getId()==id);
+            break;
         }
+            case TO_EDIT: {
+                long id = Long.valueOf(req.getParameter("id"));
+                products.stream()
+                        .filter(product -> product.getId() == id)
+                        .findFirst()
+                        .ifPresent((product -> req.setAttribute("product", product)));
+                break;
+            }
+            case EDIT: {
+                long id = Long.valueOf(req.getParameter("id"));
+                type = req.getParameter("type");
+                name = req.getParameter("name");
+                price = Double.parseDouble(req.getParameter("price"));
+                products.stream()
+                        .filter(product -> product.getId()==id)
+                        .findFirst()
+                        .ifPresent(product -> {
+                            product.setName(name);
+                            product.setType(type);
+                            product.setPrice(price);
+                        });
+                break;
+
+            }
+            }
             req.setAttribute("products", products);
             req.getRequestDispatcher("main.jsp").forward(req, resp);
         }

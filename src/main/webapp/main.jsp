@@ -8,10 +8,18 @@
 Введите данные для добавления товара:
 <p>
     <form method = "POST">
-        Тип: <input type = "text" name = "type" maxlength="20" required> <p>
-    Имя: <input type = "text" name = "name" maxlength="20" required/> <p>
-    Цена: <input type = "number" name = "price" min="1" max="500" required/> <p>
+        Тип: <input type = "text" name = "type" maxlength="20" required value="${product.type}" /> <p>
+        Имя: <input type = "text" name = "name" maxlength="20" required value="${product.name}" /> <p>
+        Цена: <input type = "number" name = "price" min="1" max="500" required value="${product.price}" /> <p>
+    <c:choose>
+    <c:when test = "${product.id > 0}">
+    <input type="hidden" name = "id" value = "${product.id}"/>
+    <input type="hidden" name = "command" value = "edit"/>
+    </c:when>
+    <c:otherwise>
     <input type="hidden" name = "command" value = "create"/>
+    </c:otherwise>
+    </c:choose>
     <input type = "submit" value = "Сохранить" />
     </form>
 
@@ -20,11 +28,16 @@
         ${brand}: <p>
     <c:forEach var = "product" items = "${products}">
     <c:if test="${product.name == brand}" >
-<form method = "POST">
-    Product: ${product.type} name:  ${product.name} price: $${product.price}
+        Product: ${product.type} name:  ${product.name} price: $${product.price}
+        <form method = "POST">
+            <input type="hidden" name="id" value="${product.id}"/>
+            <input type="hidden" name="command" value="to_edit"/>
+            <input type="submit" value="Редактировать" />
+            </form>
+        <form method="post">
     <input type="hidden" name = "id" value = "${product.id}"/>
     <input type="hidden" name = "command" value = "delete"/>
-    <input type="submit" value="X" />
+    <input type="submit" value="Удалить" />
 </form>
 </c:if>
 </c:forEach>
@@ -34,11 +47,16 @@
 <p>
     <c:forEach var = "product" items = "${products}">
     <c:if test="${(product.name != 'Puma') && (product.name != 'Adidas') && (product.name != 'Nike')}" >
+        Product: ${product.type} name:  ${product.name} price: $${product.price}
+<form method="post">
+    <input type="hidden" name="id" value="${product.id}"/>
+    <input type="hidden" name="command" value="to_edit"/>
+    <input type="submit" value="Редактировать">
+</form>
 <form method = "POST">
-    Product: ${product.type} name:  ${product.name} price: $${product.price}
     <input type="hidden" name = "id" value = "${product.id}"/>
     <input type="hidden" name = "command" value = "delete"/>
-    <input type="submit" value="X" />
+    <input type="submit" value="Удалить" />
 </form>
 </c:if>
 </c:forEach>
