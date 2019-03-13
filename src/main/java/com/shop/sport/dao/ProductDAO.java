@@ -6,6 +6,7 @@ import com.shop.sport.store.Storage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ProductDAO implements DAO<Product> {
     private static final ProductDAO INSTANCE = new ProductDAO();
@@ -52,5 +53,18 @@ public class ProductDAO implements DAO<Product> {
     @Override
     public void delete(long id) {
         storage.getProducts().removeIf(product -> product.getId()==id);
+    }
+
+    @Override
+    public List<Product> findPage(int number, int pageSize) {
+        return storage.getProducts().stream()
+                .skip((number-1)*pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public long size() {
+        return storage.getProducts().size();
     }
 }

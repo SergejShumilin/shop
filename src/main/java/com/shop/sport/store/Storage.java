@@ -12,12 +12,19 @@ public class Storage {
     private final AtomicLong idGeneration;
 
     public Storage() {
-        Product nike = new Product(1, "sneakers", "Nike", 95);
-        Product adidas = new Product(2, "sneakers", "Adidas", 100);
-        Product puma = new Product(3, "sneakers", "Puma", 85);
-        products.add(nike);
-        products.add(adidas);
-        products.add(puma);
+        products.add(new Product(1, "Nike", "sneakers", 95));
+        products.add(new Product(2, "Adidas", "sneakers", 100));
+        products.add(new Product(3, "Puma", "sneakers", 85));
+        products.add(new Product(3, "Adidas", "shirts", 40));
+        products.add(new Product(4, "Adidas", "shorts", 65));
+        products.add(new Product(5, "Nike", "shirts", 55));
+        products.add(new Product(6, "Nike", "shorts", 45));
+        products.add(new Product(7, "Puma", "shirt", 35));
+        products.add(new Product(8, "Puma", "shorts", 65));
+        products.add(new Product(9, "NewBalance", "sneakers", 80));
+        products.add(new Product(10, "NewBalance", "shirt", 80));
+        products.add(new Product(11, "Reebok", "shirt", 45));
+        products.add(new Product(12, "Reebok", "sneakers", 25));
         idGeneration = new AtomicLong(products.size());
     }
 

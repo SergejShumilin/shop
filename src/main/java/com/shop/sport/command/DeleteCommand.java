@@ -1,15 +1,9 @@
 package com.shop.sport.command;
 
-import com.shop.sport.dao.DAO;
-import com.shop.sport.dao.ProductDAO;
-import com.shop.sport.domain.Product;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
-public class DeleteCommand implements Command{
+public class DeleteCommand extends AbstractCommand{
     private static final Command INSTANCE = new DeleteCommand();
-    private final DAO<Product> dao = ProductDAO.getINSTANCE();
 
     public DeleteCommand() {
     }
@@ -23,8 +17,7 @@ public class DeleteCommand implements Command{
         long id = Long.valueOf(req.getParameter("id"));
         dao.delete(id);
 
-        List<Product> products = dao.findAll();
-        req.setAttribute("products", products);
+        populateProducts(req);
 
         return "main.jsp";
     }

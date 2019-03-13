@@ -9,7 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Product {
     private long id;
-    private String type;
     private String name;
+    private String type;
     private double price;
 }
