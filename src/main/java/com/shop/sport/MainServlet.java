@@ -1,5 +1,7 @@
 package com.shop.sport;
 
+import com.shop.sport.dao.DAO;
+import com.shop.sport.dao.ProductDAO;
 import com.shop.sport.domain.Product;
 
 import javax.servlet.ServletException;
@@ -9,31 +11,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
+
 
 @WebServlet("/")
 public class MainServlet extends HttpServlet {
-
-    private final List<Product> products = new CopyOnWriteArrayList<>();
-    private final AtomicLong idGenerator;
     private static final String CREATE = "create";
     private static final String DELETE = "delete";
     private static final String TO_EDIT = "to_edit";
     private static final String EDIT = "edit";
 
-    public MainServlet() {
-        Product nike = new Product(1, "sneakers", "Nike", 95);
-        Product adidas = new Product(2, "sneakers", "Adidas", 100);
-        Product puma = new Product(3, "sneakers", "Puma", 85);
-        products.add(nike);
-        products.add(adidas);
-        products.add(puma);
-        idGenerator = new AtomicLong(products.size());
-    }
+    private DAO<Product> dao = ProductDAO.getINSTANCE();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Product> products = dao.findAll();
         req.setAttribute("products", products);
         req.getRequestDispatcher("main.jsp").forward(req, resp);
     }
@@ -43,25 +34,22 @@ public class MainServlet extends HttpServlet {
         String command = req.getParameter("command");
         switch (command) {
             case CREATE:
-            String type = req.getParameter("type");
-            String name = req.getParameter("name");
-            Double price = Double.valueOf(req.getParameter("price"));
-            long nextId = idGenerator.incrementAndGet();
+                String type = req.getParameter("type");
+                String name = req.getParameter("name");
+                Double price = Double.valueOf(req.getParameter("price"));
 
-            Product newProduct = new Product(nextId, type, name, price);
-            products.add(newProduct);
-            break;
+                Product newProduct = Product.builder().name(name).type(type).price(price).build();
+                dao.save(newProduct);
+                break;
+
             case DELETE:{
             long id = Long.valueOf(req.getParameter("id"));
-            products.removeIf(product -> product.getId()==id);
+            dao.delete(id);
             break;
         }
             case TO_EDIT: {
                 long id = Long.valueOf(req.getParameter("id"));
-                products.stream()
-                        .filter(product -> product.getId() == id)
-                        .findFirst()
-                        .ifPresent((product -> req.setAttribute("product", product)));
+                dao.get(id).ifPresent(product -> req.setAttribute("product", product));
                 break;
             }
             case EDIT: {
@@ -69,18 +57,14 @@ public class MainServlet extends HttpServlet {
                 type = req.getParameter("type");
                 name = req.getParameter("name");
                 price = Double.parseDouble(req.getParameter("price"));
-                products.stream()
-                        .filter(product -> product.getId()==id)
-                        .findFirst()
-                        .ifPresent(product -> {
-                            product.setName(name);
-                            product.setType(type);
-                            product.setPrice(price);
-                        });
+                Product updateProduct = Product.builder().id(id).name(name).type(type).price(price).build();
+                dao.update(updateProduct);
                 break;
 
             }
             }
+
+            List<Product> products = dao.findAll();
             req.setAttribute("products", products);
             req.getRequestDispatcher("main.jsp").forward(req, resp);
         }
