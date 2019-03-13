@@ -5,6 +5,7 @@
     <title>Sport shop</title>
 </head>
 <body>
+<jsp:include page="header.jsp"/>
 Введите данные для добавления товара:
 <p>
     <form method="POST">
@@ -31,17 +32,8 @@
     ${brand}: <p>
     <c:forEach var="product" items="${products}">
         <c:if test="${product.name == brand}">
-            Product: ${product.type} name:  ${product.name} price: $${product.price}
-            <form method="POST">
-                <input type="hidden" name="id" value="${product.id}"/>
-                <input type="hidden" name="command" value="to_edit"/>
-                <input type="submit" value="Редактировать"/>
-            </form>
-            <form method="post">
-                <input type="hidden" name="id" value="${product.id}"/>
-                <input type="hidden" name="command" value="delete"/>
-                <input type="submit" value="Удалить"/>
-            </form>
+            <c:set var="product" value = "${product}" scope="request"/>
+        <c:import url="product.jsp"/>
         </c:if>
     </c:forEach>
 </c:forEach>
@@ -50,19 +42,10 @@
 <p>
     <c:forEach var="product" items="${products}">
     <c:if test="${(product.name != 'Puma') && (product.name != 'Adidas') && (product.name != 'Nike')}">
-    Product: ${product.type} name: ${product.name} price: $${product.price}
-<form method="post">
-    <input type="hidden" name="id" value="${product.id}"/>
-    <input type="hidden" name="command" value="to_edit"/>
-    <input type="submit" value="Редактировать">
-</form>
-<form method="POST">
-    <input type="hidden" name="id" value="${product.id}"/>
-    <input type="hidden" name="command" value="delete"/>
-    <input type="submit" value="Удалить"/>
-</form>
+   <c:set var="product" value="${product}" scope="request"/>
+        <c:import url="product.jsp"/>
 </c:if>
 </c:forEach>
-
+<jsp:include page="footer.jsp"/>
 </body>
 </html>
