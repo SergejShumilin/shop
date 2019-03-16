@@ -15,7 +15,6 @@ public class Storage {
         products.add(new Product(1, "Nike", "sneakers", 95));
         products.add(new Product(2, "Adidas", "sneakers", 100));
         products.add(new Product(3, "Puma", "sneakers", 85));
-        products.add(new Product(3, "Adidas", "shirts", 40));
         products.add(new Product(4, "Adidas", "shorts", 65));
         products.add(new Product(5, "Nike", "shirts", 55));
         products.add(new Product(6, "Nike", "shorts", 45));
